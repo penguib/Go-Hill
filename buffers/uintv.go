@@ -2,6 +2,7 @@ package buffers
 
 import (
 	"bytes"
+	"encoding/binary"
 )
 
 // Data is UIntv return type
@@ -44,10 +45,31 @@ func ReadUIntV(buffer *[]byte) *Data {
 }
 
 // WriteUIntV writes size of message at beginning of the buffer
-// func WriteUIntV(buffer *[]byte) {
-// 	length := len(*buffer)
+func WriteUIntV(buffer *[]byte) {
+	length := len(*buffer)
 
-// 	if length < 0x80 {
-// 		size := make([]byte, 1)
-// 	}
-// }
+	if length < 0x80 {
+		size := make([]byte, 1)
+		size[0] = byte((length << 1) + 1)
+
+		*buffer = append(size, (*buffer)...)
+	} else if length < 0x4080 {
+		size := make([]byte, 2)
+		i := ((length - 0x80) << 2) + 2
+		binary.LittleEndian.PutUint16(size, uint16(i))
+
+		*buffer = append(size, (*buffer)...)
+	} else if length < 0x204080 {
+		size := make([]byte, 3)
+		writeValue := ((length - 0x4080) << 3) + 4
+		size[0] = byte(writeValue & 0xFF)
+		binary.LittleEndian.PutUint16(size, uint16(writeValue >> 8))
+
+		*buffer = append(size, (*buffer)...)
+	} else {
+		size := make([]byte, 4)
+		binary.LittleEndian.PutUint32(size, uint32((length - 0x204080) * 8))
+
+		*buffer = append(size, (*buffer)...)
+	}
+}

@@ -39,6 +39,7 @@ func handleConnection(c net.Conn) {
 			buffer = bytes.NewBuffer(p)
 			packetType, _ = buffer.ReadByte()
 		}
+		fmt.Println(packetType)
 
 		buffers.HandlePacketType(packetType, &c, buffer)
 
@@ -62,6 +63,8 @@ func main() {
 	}
 	defer l.Close()
 	rand.Seed(time.Now().Unix())
+
+	fmt.Println("Starting server...")
 
 	for {
 		c, err := l.Accept()

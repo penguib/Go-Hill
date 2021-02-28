@@ -14,7 +14,7 @@ const (
 type player struct {
 	Username       string
 	UserID         uint32
-	Admin          bool
+	Admin          uint8
 	MembershipType uint8
 }
 
@@ -47,7 +47,7 @@ func CheckAuth(socket *net.Conn, buffer *bytes.Buffer) (*player, error) {
 	return &player{
 		Username:       "Player" + fmt.Sprint(playerID),
 		UserID:         playerID,
-		Admin:          false,
+		Admin:          0,
 		MembershipType: 1,
 	}, nil
 }
