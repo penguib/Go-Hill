@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"./buffers"
+	"./lualang"
 )
 
 func handleConnection(c net.Conn) {
@@ -65,6 +66,7 @@ func main() {
 	rand.Seed(time.Now().Unix())
 
 	fmt.Println("Starting server...")
+	go lualang.Init()
 
 	for {
 		c, err := l.Accept()

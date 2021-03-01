@@ -63,12 +63,12 @@ func WriteUIntV(buffer *[]byte) {
 		size := make([]byte, 3)
 		writeValue := ((length - 0x4080) << 3) + 4
 		size[0] = byte(writeValue & 0xFF)
-		binary.LittleEndian.PutUint16(size, uint16(writeValue >> 8))
+		binary.LittleEndian.PutUint16(size, uint16(writeValue>>8))
 
 		*buffer = append(size, (*buffer)...)
 	} else {
 		size := make([]byte, 4)
-		binary.LittleEndian.PutUint32(size, uint32((length - 0x204080) * 8))
+		binary.LittleEndian.PutUint32(size, uint32((length-0x204080)*8))
 
 		*buffer = append(size, (*buffer)...)
 	}

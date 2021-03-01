@@ -1,4 +1,4 @@
-package utils
+package classes
 
 type Vector3 struct {
 	x float32

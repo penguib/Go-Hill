@@ -23,7 +23,7 @@ func HandlePacketType(packetType uint8, socket *net.Conn, buffer *bytes.Buffer) 
 			}
 
 			fmt.Printf("Successfully verified! (Username: %s | ID: %s | Admin: %s)\n", (*user).Username, fmt.Sprint((*user).UserID), fmt.Sprint((*user).Admin))
-			
+
 			var buffer []byte
 			var pType uint8 = 1
 			authPacket := New(&buffer, pType)
@@ -37,11 +37,14 @@ func HandlePacketType(packetType uint8, socket *net.Conn, buffer *bytes.Buffer) 
 
 			authPacket.Send(socket)
 
-			
 		}
-	
+
+	// Player position
+	case 2:
+		break
+
 	// Chat and commands
-	case 3: 
+	case 3:
 		{
 			command, _ := buffer.ReadString(0)
 			args, _ := buffer.ReadString(0)
@@ -49,7 +52,7 @@ func HandlePacketType(packetType uint8, socket *net.Conn, buffer *bytes.Buffer) 
 			fmt.Println(command, args)
 			var mBuf []byte
 			var pType uint8 = 7
-			
+
 			messagePacket := New(&mBuf, pType)
 
 			messagePacket.Write("string", "prompt")
@@ -57,6 +60,14 @@ func HandlePacketType(packetType uint8, socket *net.Conn, buffer *bytes.Buffer) 
 
 			messagePacket.Send(socket)
 		}
+
+	// Projectiles
+	case 4:
+		break
+
+	// Brick click detection
+	case 5:
+		break
 
 	// Clicks and keys
 	case 6:

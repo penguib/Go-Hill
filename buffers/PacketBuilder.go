@@ -1,47 +1,45 @@
 package buffers
 
 import (
-	"net"
 	"encoding/binary"
-	"fmt"
+	"net"
 )
 
 const (
 	Authentication = iota + 1
 
-    SendBrick
+	SendBrick
 
-    SendPlayers
+	SendPlayers
 
-    Figure
+	Figure
 
-    RemovePlayer
+	RemovePlayer
 
-    Chat
+	Chat
 
-    PlayerModification
+	PlayerModification
 
-    Kill
+	Kill
 
-    Brick
+	Brick
 
-    Team
+	Team
 
-    Tool
+	Tool
 
-    Bot
+	Bot
 
-    ClearMap
+	ClearMap
 
-    DestroyBot
+	DestroyBot
 
-    DeleteBrick
+	DeleteBrick
 )
 
 type PacketBuilder struct {
 	buffer []byte
 }
-
 
 func New(buffer *[]byte, packetType uint8) PacketBuilder {
 	var p PacketBuilder
@@ -57,7 +55,7 @@ func (p *PacketBuilder) Write(dataType string, data interface{}) []byte {
 			p.buffer = append(p.buffer, []byte(data.(string))...)
 		}
 	case "bool":
-			fallthrough
+		fallthrough
 	case "uint8":
 		{
 			p.buffer = append(p.buffer, data.(uint8))
@@ -82,7 +80,7 @@ func (p *PacketBuilder) Write(dataType string, data interface{}) []byte {
 	// 	}
 	default:
 		break
-		
+
 	}
 
 	return p.buffer
@@ -90,9 +88,5 @@ func (p *PacketBuilder) Write(dataType string, data interface{}) []byte {
 
 func (p *PacketBuilder) Send(socket *net.Conn) {
 	WriteUIntV(&p.buffer)
-	n, err := (*socket).Write(p.buffer)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(n)
+	(*socket).Write(p.buffer)
 }
