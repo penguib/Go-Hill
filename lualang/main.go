@@ -22,7 +22,11 @@ func Init() {
 	mt := L.NewTypeMetatable(LuaInstanceTypeName)
 	L.SetGlobal("Instance", mt)
 	L.SetField(mt, "new", L.NewFunction(newInstance))
-	L.SetField(mt, "__index", L.SetFuncs(L.NewTable(), InstanceMethods))
+	L.SetField(mt, "__index", L.SetFuncs(L.NewTable(), getInstanceMethods()))
+
+	// Try to define all Instance methods
+	// First check the certain Instance
+	// Then only allow the methods that pertain to that class
 
 	err := L.DoFile(testScriptsPath + "script.lua")
 

@@ -5,10 +5,8 @@ import (
 	"compress/zlib"
 	"fmt"
 	"io/ioutil"
-	"math/rand"
 	"net"
 	"os"
-	"time"
 
 	"./buffers"
 	"./lualang"
@@ -63,7 +61,6 @@ func main() {
 		return
 	}
 	defer l.Close()
-	rand.Seed(time.Now().Unix())
 
 	fmt.Println("Starting server...")
 	go lualang.Init()

@@ -9,20 +9,32 @@ const (
 	LuaInstanceTypeName = "Instance"
 )
 
+var instanceClassTypeID uint8
+
 type Instance struct {
-	ClassName string
-	ClassType interface{}
-	ClassID   uint8
+	ClassName   string
+	ClassType   interface{}
+	ClassTypeID uint8
+	ClassID     uint8
 }
 
-func getClassType(className string) interface{} {
+func getClassType(className string) (interface{}, uint8) {
 	switch className {
 	case "Player":
 		{
-			return &classes.Player{}
+			return &classes.Player{
+				Username: "Player",
+			}, 1
+		}
+	case "Brick":
+		{
+			return &classes.Brick{
+				Color: 0xff00ff,
+				Name:  "Brick",
+			}, 2
 		}
 	default:
-		return nil
+		return nil, 0
 	}
 }
 
@@ -32,7 +44,10 @@ func newInstance(L *lua.LState) int {
 		ClassName: L.CheckString(1),
 		ClassID:   uint8(1),
 	}
-	i.ClassType = getClassType(i.ClassName)
+	cType, cID := getClassType(i.ClassName)
+	i.ClassType = cType
+	i.ClassID = cID
+	instanceClassTypeID = cID
 
 	ud := L.NewUserData()
 	ud.Value = i
@@ -58,6 +73,18 @@ func instanceGetSetID(L *lua.LState) int {
 	}
 	L.Push(lua.LNumber(p.(*Instance).ClassID))
 	return 1
+}
+
+func getInstanceMethods() map[string]lua.LGFunction {
+	switch instanceClassTypeID {
+	case 1:
+		return PlayerMethods
+	case 2:
+		return BrickMethods
+	default:
+		return PlayerMethods
+	}
+
 }
 
 var InstanceMethods = map[string]lua.LGFunction{
