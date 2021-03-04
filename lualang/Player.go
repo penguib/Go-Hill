@@ -1,7 +1,8 @@
 package lualang
 
 import (
-	"../classes"
+	"Go-Hill/classes"
+
 	lua "github.com/yuin/gopher-lua"
 )
 

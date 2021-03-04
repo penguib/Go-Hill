@@ -8,8 +8,8 @@ import (
 	"net"
 	"os"
 
-	"./buffers"
-	"./lualang"
+	"Go-Hill/buffers"
+	"Go-Hill/lualang"
 )
 
 func handleConnection(c net.Conn) {
@@ -38,7 +38,6 @@ func handleConnection(c net.Conn) {
 			buffer = bytes.NewBuffer(p)
 			packetType, _ = buffer.ReadByte()
 		}
-		fmt.Println(packetType)
 
 		buffers.HandlePacketType(packetType, &c, buffer)
 

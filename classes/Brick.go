@@ -1,8 +1,7 @@
 package classes
 
 type Brick struct {
-	// hex
-	Color int
+	Color uint32
 	Name  string
 	Size  Vector3
 }

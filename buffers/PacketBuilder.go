@@ -2,45 +2,36 @@ package buffers
 
 import (
 	"encoding/binary"
+	"log"
+	"math"
 	"net"
 )
 
-const (
-	Authentication = iota + 1
+// Enums define what type of packet you're building
+var Enums = map[string]uint8{
+	"Authentication":     1,
+	"SendBrick":          2,
+	"SendPlayers":        3,
+	"Figure":             4,
+	"RemovePlayer":       5,
+	"Chat":               6,
+	"PlayerModification": 7,
+	"Kill":               8,
+	"Brick":              9,
+	"Team":               10,
+	"Tool":               11,
+	"Bot":                12,
+	"ClearMap":           14,
+	"DestroyBot":         15,
+	"DeleteBrick":        16,
+}
 
-	SendBrick
-
-	SendPlayers
-
-	Figure
-
-	RemovePlayer
-
-	Chat
-
-	PlayerModification
-
-	Kill
-
-	Brick
-
-	Team
-
-	Tool
-
-	Bot
-
-	ClearMap
-
-	DestroyBot
-
-	DeleteBrick
-)
-
+// PacketBuilder builds packets
 type PacketBuilder struct {
 	buffer []byte
 }
 
+// New creates a new packet
 func New(buffer *[]byte, packetType uint8) PacketBuilder {
 	var p PacketBuilder
 	p.buffer = *buffer
@@ -52,7 +43,9 @@ func (p *PacketBuilder) Write(dataType string, data interface{}) []byte {
 	switch dataType {
 	case "string":
 		{
-			p.buffer = append(p.buffer, []byte(data.(string))...)
+			sBuf := []byte(data.(string))
+			sBuf = append(sBuf, 0)
+			p.buffer = append(p.buffer, sBuf...)
 		}
 	case "bool":
 		fallthrough
@@ -62,22 +55,28 @@ func (p *PacketBuilder) Write(dataType string, data interface{}) []byte {
 		}
 	case "uint16":
 		{
-			d := make([]byte, 2)
-			binary.LittleEndian.PutUint16(d, data.(uint16))
-			p.buffer = append(p.buffer, d...)
+			buf := make([]byte, 2)
+			binary.LittleEndian.PutUint16(buf, data.(uint16))
+			p.buffer = append(p.buffer, buf...)
 		}
 	case "uint32":
 		{
-			d := make([]byte, 4)
-			binary.LittleEndian.PutUint32(d, data.(uint32))
-			p.buffer = append(p.buffer, d...)
+			buf := make([]byte, 4)
+			binary.LittleEndian.PutUint32(buf, data.(uint32))
+			p.buffer = append(p.buffer, buf...)
 		}
-	// case "int32":
-	// 	{
-	// 		d := make([]byte, 4)
-	// 		binary.LittleEndian.PutInt32(d, data.(int32))
-	// 		p.buffer = append(p.buffer, d...)
-	// 	}
+	case "float":
+		{
+			buf := make([]byte, 4)
+			binary.LittleEndian.PutUint32(buf, math.Float32bits(data.(float32)))
+			p.buffer = append(p.buffer, buf...)
+		}
+	case "int32":
+		{
+			buf := make([]byte, 4)
+			binary.LittleEndian.PutUint32(buf, uint32(data.(int32)))
+			p.buffer = append(p.buffer, buf...)
+		}
 	default:
 		break
 
@@ -86,7 +85,43 @@ func (p *PacketBuilder) Write(dataType string, data interface{}) []byte {
 	return p.buffer
 }
 
+// Send sends the packet to the specified client
 func (p *PacketBuilder) Send(socket *net.Conn) {
 	WriteUIntV(&p.buffer)
 	(*socket).Write(p.buffer)
+}
+
+// Broadcast sends the packet to all clients
+func (p *PacketBuilder) Broadcast() {
+	WriteUIntV(&p.buffer)
+
+	for _, v := range Players {
+		_, err := (*v.Socket).Write(p.buffer)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+
+}
+
+// BroadcastExcept sends the packets to all clients except the specified
+func (p *PacketBuilder) BroadcastExcept(id uint32) {
+	WriteUIntV(&p.buffer)
+
+	for _, v := range Players {
+		if v.NetID == id {
+			continue
+		}
+		_, err := (*v.Socket).Write(p.buffer)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+}
+
+// Insert inserts uint8 into the second position of the buffer
+func (p *PacketBuilder) Insert(i uint8) {
+	p.buffer = append(p.buffer, 0)
+	copy(p.buffer[2:], p.buffer[1:])
+	p.buffer[1] = i
 }

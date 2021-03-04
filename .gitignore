@@ -1,2 +1,8 @@
+# Launch client 
 *.bat
+
+# Lua test files
 /lualang/tests
+
+# Node_Modules
+node_modules/
