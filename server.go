@@ -8,6 +8,7 @@ import (
 	"net"
 	"os"
 
+	"Go-Hill/api"
 	"Go-Hill/buffers"
 	"Go-Hill/lualang"
 )
@@ -63,6 +64,7 @@ func main() {
 
 	fmt.Println("Starting server...")
 	go lualang.Init()
+	go api.SetAvatar(2)
 
 	for {
 		c, err := l.Accept()

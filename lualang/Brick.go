@@ -18,7 +18,7 @@ func getSetColor(L *lua.LState) int {
 	b := checkData(L)
 	c := b.(*Instance).ClassType.(*classes.Brick).Color
 	if L.GetTop() == 2 {
-		c = L.CheckInt(2)
+		c = uint32(L.CheckInt(2))
 		return 0
 	}
 	L.Push(lua.LNumber(c))
