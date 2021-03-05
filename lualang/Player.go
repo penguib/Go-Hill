@@ -1,14 +1,14 @@
 package lualang
 
 import (
-	"Go-Hill/classes"
+	"Go-Hill/buffers"
 
 	lua "github.com/yuin/gopher-lua"
 )
 
 func getSetName(L *lua.LState) int {
 	b := checkData(L)
-	n := b.(*Instance).ClassType.(*classes.Player).Username
+	n := b.(*Instance).ClassType.(*buffers.Player).Username
 
 	if L.GetTop() == 2 {
 		n = L.CheckString(2)

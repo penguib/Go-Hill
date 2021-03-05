@@ -1,6 +1,7 @@
 package buffers
 
 import (
+	"Go-Hill/utils"
 	"encoding/binary"
 	"log"
 	"math"
@@ -87,15 +88,15 @@ func (p *PacketBuilder) Write(dataType string, data interface{}) []byte {
 
 // Send sends the packet to the specified client
 func (p *PacketBuilder) Send(socket *net.Conn) {
-	WriteUIntV(&p.buffer)
+	utils.WriteUIntV(&p.buffer)
 	(*socket).Write(p.buffer)
 }
 
 // Broadcast sends the packet to all clients
 func (p *PacketBuilder) Broadcast() {
-	WriteUIntV(&p.buffer)
+	utils.WriteUIntV(&p.buffer)
 
-	for _, v := range Players {
+	for _, v := range _Game.Players {
 		_, err := (*v.Socket).Write(p.buffer)
 		if err != nil {
 			log.Fatal(err)
@@ -106,9 +107,9 @@ func (p *PacketBuilder) Broadcast() {
 
 // BroadcastExcept sends the packets to all clients except the specified
 func (p *PacketBuilder) BroadcastExcept(id uint32) {
-	WriteUIntV(&p.buffer)
+	utils.WriteUIntV(&p.buffer)
 
-	for _, v := range Players {
+	for _, v := range _Game.Players {
 		if v.NetID == id {
 			continue
 		}

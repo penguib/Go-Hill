@@ -1,11 +1,7 @@
 package buffers
 
-import (
-	"Go-Hill/classes"
-)
-
-// CreatePlayerIDBuffer handles the buffer for the player
-func CreatePlayerIDBuffer(player *classes.Player, idString string) PacketBuilder {
+// CreatePlayerPacket handles the packets for the player
+func CreatePlayerPacket(player *Player, idString string) PacketBuilder {
 	var buffer []byte
 	figurePacket := New(&buffer, Enums["Figure"])
 

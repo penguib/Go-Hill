@@ -11,10 +11,14 @@ import (
 	"Go-Hill/api"
 	"Go-Hill/buffers"
 	"Go-Hill/lualang"
+	"Go-Hill/utils"
 )
 
 func handleConnection(c net.Conn) {
 	fmt.Printf("<New client: %s\n", c.RemoteAddr())
+
+	var lPlayer buffers.Player
+
 	for {
 		buf := make([]byte, 40)
 		_, err := c.Read(buf)
@@ -22,7 +26,7 @@ func handleConnection(c net.Conn) {
 			break
 		}
 
-		b := buffers.ReadUIntV(&buf)
+		b := utils.ReadUIntV(&buf)
 
 		packet := buf[b.End:]
 		parsedPacket := packet[:b.MessageSize]
@@ -40,9 +44,11 @@ func handleConnection(c net.Conn) {
 			packetType, _ = buffer.ReadByte()
 		}
 
-		buffers.HandlePacketType(packetType, &c, buffer)
-
+		buffers.HandlePacketType(packetType, &c, buffer, &lPlayer)
 	}
+
+	lPlayer.Left()
+
 	fmt.Printf("<Client: %s> Lost connection.\n", c.RemoteAddr())
 	c.Close()
 }

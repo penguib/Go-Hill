@@ -1,4 +1,4 @@
-package classes
+package buffers
 
 // Vector3 handles all the vectors
 type Vector3 struct {
