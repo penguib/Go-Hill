@@ -1,4 +1,4 @@
-package classes
+package buffers
 
 import (
 	"net"
@@ -56,6 +56,8 @@ type Player struct {
 	Colors colors
 
 	Speech string
+
+	Game *Game
 }
 
 // SetScore sets the score of the player
@@ -82,4 +84,10 @@ func (p *Player) SetBodyColor(color uint32) {
 
 	p.Colors.LeftArm = color
 	p.Colors.LeftLeg = color
+
+	p.Assets.Hat1 = 239535
+}
+
+func (p *Player) Left() {
+	p.Game.MessageAll("\\c6[SERVER]: \\c0" + p.Username + " has left the server!")
 }

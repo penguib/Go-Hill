@@ -1,7 +1,7 @@
 package lualang
 
 import (
-	"Go-Hill/classes"
+	"Go-Hill/buffers"
 
 	lua "github.com/yuin/gopher-lua"
 )
@@ -23,13 +23,13 @@ func getClassType(className string) (interface{}, uint8) {
 	switch className {
 	case "Player":
 		{
-			return &classes.Player{
+			return &buffers.Player{
 				Username: "Player",
 			}, 1
 		}
 	case "Brick":
 		{
-			return &classes.Brick{
+			return &buffers.Brick{
 				Color: 0xff00ff,
 				Name:  "Brick",
 			}, 2

@@ -1,4 +1,4 @@
-package buffers
+package utils
 
 import (
 	"bytes"

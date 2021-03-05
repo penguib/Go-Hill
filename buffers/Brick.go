@@ -1,4 +1,4 @@
-package classes
+package buffers
 
 type Brick struct {
 	Color uint32
